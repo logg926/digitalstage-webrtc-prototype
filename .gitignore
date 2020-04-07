@@ -1,0 +1,7 @@
+.now
+.env
+.next
+init-now-secrets.sh
+.DS_Store
+.idea
+node_modules
