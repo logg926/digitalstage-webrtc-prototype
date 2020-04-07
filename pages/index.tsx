@@ -7,17 +7,12 @@ export default () => {
             <h1>DIGIAL STAGE - REHEARSAL ROOM</h1>
             <Link href="/test">
                 <Button>
-                    An Probe teilnehmen
+                    Zu den Tests
                 </Button>
             </Link>
-            <Link href="/playback">
+            <Link href="/stage">
                 <Button>
-                    Public Djing
-                </Button>
-            </Link>
-            <Link href="/click">
-                <Button>
-                    Synchronisierter Click
+                    Zum Frontend
                 </Button>
             </Link>
         </div>

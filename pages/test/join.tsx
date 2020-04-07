@@ -1,16 +1,16 @@
 import React from "react";
 import {Button} from "baseui/button";
 import socketIOClient from "socket.io-client";
-import Video from "../components/media/Video";
+import Video from "../../components/media/Video";
 import {styled} from "baseui";
-import {withDarkMode} from "../lib/useDarkModeSwitch";
-import {fixAudioContextAPI} from "../lib/useClick/AudioContextMokeyPatch";
+import {withDarkMode} from "../../lib/useDarkModeSwitch";
+import {fixAudioContextAPI} from "../../lib/useClick/AudioContextMokeyPatch";
 import dynamic from "next/dynamic";
-import PlaybackPlayer from "../components/media/playback/PlaybackPlayer";
+import PlaybackPlayer from "../../components/media/playback/PlaybackPlayer";
 import webAudioTouchUnlock from "web-audio-touch-unlock";
-import {withTimesync} from "../lib/useTimesync";
-import VideoWithConnection from "../components/media/VideoWithConnection";
-import {SERVER_PORT, SERVER_URL} from "../env";
+import {withTimesync} from "../../lib/useTimesync";
+import VideoWithConnection from "../../components/media/VideoWithConnection";
+import {SERVER_PORT, SERVER_URL} from "../../env";
 
 fixAudioContextAPI();
 
@@ -128,7 +128,7 @@ const Background = styled('div', (props: {
     backgroundColor: props.$darkMode ? 'black' : 'white'
 }));
 
-class Test extends React.Component<{
+class Join extends React.Component<{
     darkMode: boolean,
     setDarkMode: (enabled: boolean) => void,
     offset: number
@@ -393,4 +393,4 @@ class Test extends React.Component<{
     }
 }
 
-export default withDarkMode(withTimesync(Test));
+export default withDarkMode(withTimesync(Join));

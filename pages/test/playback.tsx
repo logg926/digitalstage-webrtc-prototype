@@ -1,16 +1,16 @@
-import PlaybackController, {PlaybackFile} from "../components/media/playback/PlaybackController";
+import PlaybackController, {PlaybackFile} from "../../components/media/playback/PlaybackController";
 import React, {useCallback, useEffect, useState} from "react";
-import FileUploader from "../components/media/playback/FileUploader";
-import {fixAudioContextAPI} from "../lib/useClick/AudioContextMokeyPatch";
+import FileUploader from "../../components/media/playback/FileUploader";
+import {fixAudioContextAPI} from "../../lib/useClick/AudioContextMokeyPatch";
 import {Input} from "baseui/input";
 import {Button} from "baseui/button";
 import {styled} from "baseui";
 import firebase from "firebase/app";
 import "firebase/storage";
 import "firebase/firestore";
-import initFirebase from "../lib/initFirebase";
+import initFirebase from "../../lib/initFirebase";
 import webAudioTouchUnlock from "web-audio-touch-unlock";
-import useTimesync from "../lib/useTimesync";
+import useTimesync from "../../lib/useTimesync";
 
 initFirebase();
 fixAudioContextAPI();

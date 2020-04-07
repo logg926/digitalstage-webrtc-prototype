@@ -1,10 +1,10 @@
 import {useCallback, useEffect, useState} from "react";
-import useTimesync from "../lib/useTimesync";
+import useTimesync from "../../lib/useTimesync";
 import {Button} from "baseui/button";
 import firebase from "firebase/app";
 import "firebase/firestore";
-import initFirebase from "../lib/initFirebase";
-import useClick from "../lib/useClick";
+import initFirebase from "../../lib/initFirebase";
+import useClick from "../../lib/useClick";
 import {Checkbox, LABEL_PLACEMENT} from "baseui/checkbox";
 
 initFirebase();
