@@ -5,6 +5,7 @@ import {styled} from "baseui";
 import usePlayback from "../../../lib/usePlayback";
 import {useDarkModeSwitch} from "../../../lib/useDarkModeSwitch";
 import {Checkbox, LABEL_PLACEMENT} from "baseui/checkbox";
+import {IAudioContext, IAudioNode} from "standardized-audio-context";
 
 const options: OptionsT = [
     {label: "Bass", id: "/song/bass.wav"},
@@ -42,8 +43,8 @@ export interface PlaybackFile {
 }
 
 export default (props: {
-    context?: AudioContext,
-    target?: AudioNode,
+    context?: IAudioContext,
+    target?: IAudioNode<IAudioContext>,
     files: PlaybackFile[],
     offset: number
 }) => {

@@ -1,8 +1,5 @@
 import {useCallback, useEffect, useState} from "react";
-import webAudioTouchUnlock from "web-audio-touch-unlock";
-import {fixAudioContextAPI} from "./AudioContextMokeyPatch";
-
-fixAudioContextAPI();
+import {IAudioBufferSourceNode, IAudioContext, AudioContext} from "standardized-audio-context";
 
 // Some global settings
 const freq = 600;
@@ -15,7 +12,7 @@ export interface TimeSignature {
     measure: number
 }
 
-export const generateClick = (context: AudioContext, bpm: number, timeSignature: TimeSignature): AudioBuffer => {
+export const generateClick = (context: IAudioContext, bpm: number, timeSignature: TimeSignature): AudioBuffer => {
     const noteTimeEachQuarter = (60 / bpm);
     const noteTimeEachBeat = noteTimeEachQuarter / (timeSignature.measure / 4);
     const clickBuffer = context.createBuffer(1, context.sampleRate * noteTimeEachBeat * timeSignature.beats, context.sampleRate);
@@ -55,15 +52,15 @@ export default (props: {
     offset?: number,
     target?: AudioNode,
 }) => {
-    const [context, setContext] = useState<AudioContext>();
+    const [context, setContext] = useState<IAudioContext>();
     const [playing, setPlaying] = useState<boolean>(false);
-    const [buffer, setBuffer] = useState<AudioBufferSourceNode>();
+    const [buffer, setBuffer] = useState<IAudioBufferSourceNode<IAudioContext>>();
     const [enabled, setEnabled] = useState<boolean>(false);
 
     const enableClick = () => {
         // @ts-ignore
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        webAudioTouchUnlock(audioCtx)
+        const audioCtx: IAudioContext = new AudioContext();
+        /*webAudioTouchUnlock(audioCtx)
             .then((unlocked: boolean) => {
                 if (unlocked) {
                     // AudioContext was unlocked from an explicit user action, sound should start playing now
@@ -72,8 +69,8 @@ export default (props: {
                 }
             }, (reason: any) => {
                 console.error(reason);
-            });
-        const source: AudioBufferSourceNode = audioCtx.createBufferSource();
+            });*/
+        const source: IAudioBufferSourceNode<IAudioContext> = audioCtx.createBufferSource();
         source.connect(audioCtx.destination);
         source.loop = true;
         source.buffer = generateClick(audioCtx, 120, {
@@ -102,7 +99,7 @@ export default (props: {
             }
             // And recreate buffer
             if (context) {
-                const source: AudioBufferSourceNode = context.createBufferSource();
+                const source: IAudioBufferSourceNode<IAudioContext> = context.createBufferSource();
                 source.connect(context.destination);
                 source.loop = true;
                 source.buffer = generateClick(context, 120, {

@@ -4,6 +4,7 @@ import {Provider as StyletronProvider} from 'styletron-react'
 import {debug, styletron} from '../styletron'
 import {BaseProvider, DarkTheme, LightTheme} from "baseui";
 import {DarkModeContext} from '../lib/useDarkModeSwitch';
+import {AuthContextProvider} from "../lib/useAuth";
 
 interface Props {
 
@@ -67,7 +68,9 @@ export default class MyApp extends App<Props, States> {
                     `
                         }
                         </style>
-                        <Component {...pageProps} />
+                        <AuthContextProvider>
+                            <Component {...pageProps} />
+                        </AuthContextProvider>
                     </BaseProvider>
                 </DarkModeContext.Provider>
             </StyletronProvider>

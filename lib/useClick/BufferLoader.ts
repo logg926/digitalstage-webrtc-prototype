@@ -1,3 +1,5 @@
+import {IAudioBuffer, IAudioContext} from "standardized-audio-context";
+
 const BUFFERS_TO_LOAD = {
     snare: '/sounds/snare.wav',
     kick: '/sounds/kick.wav',
@@ -6,11 +8,11 @@ const BUFFERS_TO_LOAD = {
 export class BufferLoaderOld {
     private readonly context: any;
     private readonly urlList: string[];
-    private readonly onload: (bufferList: AudioBuffer[]) => void;
-    private bufferList: AudioBuffer[];
+    private readonly onload: (bufferList: IAudioBuffer[]) => void;
+    private bufferList: IAudioBuffer[];
     private loadCount: number;
 
-    constructor(context: AudioContext, urlList: string[], callback?: (bufferList: AudioBuffer[]) => void) {
+    constructor(context: AudioContext, urlList: string[], callback?: (bufferList: IAudioBuffer[]) => void) {
         this.context = context;
         this.urlList = urlList;
         this.onload = callback;
@@ -63,22 +65,22 @@ export interface UrlList {
 }
 
 export interface Buffers {
-    [name: string]: AudioBuffer
+    [name: string]: IAudioBuffer
 }
 
 export const BUFFERS: Buffers = {};
 
 export class BufferLoader {
-    private readonly context: AudioContext;
+    private readonly context: IAudioContext;
     private readonly urlList: UrlList | undefined;
 
-    constructor(context: AudioContext, urlList?: UrlList) {
+    constructor(context: IAudioContext, urlList?: UrlList) {
         this.context = context;
         this.urlList = urlList;
     }
 
-    loadBuffer = (url: string): Promise<AudioBuffer> => {
-        return new Promise<AudioBuffer>((resolve, reject) => {
+    loadBuffer = (url: string): Promise<IAudioBuffer> => {
+        return new Promise<IAudioBuffer>((resolve, reject) => {
             const request = new XMLHttpRequest();
             request.open("GET", url, true);
             request.responseType = "arraybuffer";
@@ -87,7 +89,7 @@ export class BufferLoader {
                 // Asynchronously decode the audio file data in request.response
                 loader.context.decodeAudioData(
                     request.response,
-                    function (buffer: AudioBuffer) {
+                    function (buffer: IAudioBuffer) {
                         if (!buffer) {
                             alert('error decoding file data: ' + url);
                             return reject("error decoding file data: " + url);
@@ -120,6 +122,6 @@ export class BufferLoader {
     }
 }
 
-export const loadBuffers = (context: AudioContext): Promise<Buffers> => {
+export const loadBuffers = (context: IAudioContext): Promise<Buffers> => {
     return new BufferLoader(context, BUFFERS_TO_LOAD).load();
 };

@@ -3,6 +3,7 @@ import React, {useEffect, useState} from "react";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import initFirebase from "../../../lib/initFirebase";
+import {IAudioContext, IAudioNode} from "standardized-audio-context";
 
 initFirebase();
 
@@ -14,8 +15,8 @@ const localFiles: PlaybackFile[] = [
 ];
 
 export default (props: {
-    audioContext?: AudioContext,
-    target?: AudioNode,
+    audioContext?: IAudioContext,
+    target?: IAudioNode<IAudioContext>,
     offset: number
 }) => {
     const [files, setFiles] = useState<PlaybackFile[]>(localFiles);

@@ -1,11 +1,13 @@
 import React, {useEffect, useState} from "react";
 import {Slider} from "baseui/slider";
 import {Checkbox} from "baseui/checkbox";
+import {AudioContext, IAudioNode, IGainNode, IMediaStreamTrackAudioSourceNode} from 'standardized-audio-context';
+import {IAudioContext} from "standardized-audio-context/build/es2019/interfaces";
 
 interface AudioTrack {
     id: string;
     mediaStreamTrack: MediaStreamTrack;
-    gainNode: GainNode;
+    gainNode: IGainNode<IAudioContext>;
     volume: number;
     muted: boolean;
 }
@@ -13,8 +15,8 @@ interface AudioTrack {
 export default (props: {
     mediaStreamTracks: MediaStreamTrack[];
     onStreamAvailable?: (stream: MediaStream) => void;
-    audioContext: AudioContext;
-    targets: AudioNode[];
+    audioContext: IAudioContext;
+    targets: IAudioNode<IAudioContext>[];
 }) => {
     const [audioContext, setAudioContext] = useState<AudioContext>(props.audioContext);
     const [audioTracks, setAudioTracks] = useState<AudioTrack[]>([]);
@@ -32,11 +34,11 @@ export default (props: {
             (mediaStreamTrack: MediaStreamTrack) => {
                 let audioTrack: AudioTrack | undefined = currentAudioTrack.find((audioTrack: AudioTrack) => audioTrack.id === mediaStreamTrack.id);
                 if (!audioTrack) {
-                    const gainNode: GainNode = props.audioContext.createGain();
-                    const stream = props.audioContext.createMediaStreamTrackSource(mediaStreamTrack);
+                    const gainNode: IGainNode<IAudioContext> = props.audioContext.createGain();
+                    const stream: IMediaStreamTrackAudioSourceNode<IAudioContext> = props.audioContext.createMediaStreamTrackSource(mediaStreamTrack);
                     stream.connect(gainNode);
                     props.targets.forEach(
-                        (target: AudioNode) => gainNode.connect(target)
+                        (target: IAudioNode<IAudioContext>) => gainNode.connect(target)
                     );
                     currentAudioTrack.push({
                         id: mediaStreamTrack.id,
@@ -87,9 +89,11 @@ export default (props: {
         <div>
             {audioTracks.map((audioTrack: AudioTrack) => (
                 <div>
+                    Audiotrack: {audioTrack.id}
                     <Checkbox checked={audioTrack.muted}
-                              onChange={(e) => muteAudioTrack(audioTrack.id, e.currentTarget.checked)}/>
-                    {audioTrack.id}
+                              onChange={(e) => muteAudioTrack(audioTrack.id, e.currentTarget.checked)}>
+                        Mute
+                    </Checkbox>
                     <Slider value={[audioTrack.volume]}
                             min={0}
                             max={1}

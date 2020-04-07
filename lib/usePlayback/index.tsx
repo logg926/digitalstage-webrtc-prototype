@@ -1,9 +1,7 @@
 import {useCallback, useEffect, useState} from "react";
 import {BufferLoader} from "../useClick/BufferLoader";
-import {fixAudioContextAPI} from "../useClick/AudioContextMokeyPatch";
 import useCountDown from 'react-countdown-hook';
-
-fixAudioContextAPI();
+import {IAudioBuffer, IAudioBufferSourceNode, IAudioContext, IAudioNode} from "standardized-audio-context";
 
 const calculateNextStartTime = (startTime: number, offset: number = 0, trackLength: number): number => {
     const now = Date.now() + offset;
@@ -17,14 +15,14 @@ const calculateNextStartTime = (startTime: number, offset: number = 0, trackLeng
 
 export default (props: {
     startTime: number,
-    context?: AudioContext,
+    context?: IAudioContext,
     offset?: number,
-    target?: AudioNode,
+    target?: IAudioNode<IAudioContext>,
     filePath?: string
 }) => {
     const [playing, setPlaying] = useState<boolean>(false);
-    const [audioBuffer, setAudioBuffer] = useState<AudioBuffer>();
-    const [bufferNode, setBufferNode] = useState<AudioBufferSourceNode>();
+    const [audioBuffer, setAudioBuffer] = useState<IAudioBuffer>();
+    const [bufferNode, setBufferNode] = useState<IAudioBufferSourceNode<IAudioContext>>();
     const [timeLeft, start] = useCountDown(0, 1000);
 
     useEffect(() => {
@@ -33,7 +31,7 @@ export default (props: {
             if (props.filePath) {
                 setAudioBuffer(undefined);
                 new BufferLoader(props.context).loadBuffer(props.filePath).then(
-                    (audioBuffer: AudioBuffer) => {
+                    (audioBuffer: IAudioBuffer) => {
                         setAudioBuffer(audioBuffer);
                     }
                 )
@@ -45,7 +43,7 @@ export default (props: {
         if (!bufferNode) {
             if (props.context) {
                 if (audioBuffer) {
-                    const bufferNode: AudioBufferSourceNode = props.context.createBufferSource();
+                    const bufferNode: IAudioBufferSourceNode<IAudioContext> = props.context.createBufferSource();
                     if (props.target) {
                         bufferNode.connect(props.target);
                     } else {

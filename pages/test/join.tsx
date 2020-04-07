@@ -4,19 +4,18 @@ import socketIOClient from "socket.io-client";
 import Video from "../../components/media/Video";
 import {styled} from "baseui";
 import {withDarkMode} from "../../lib/useDarkModeSwitch";
-import {fixAudioContextAPI} from "../../lib/useClick/AudioContextMokeyPatch";
-import dynamic from "next/dynamic";
 import PlaybackPlayer from "../../components/media/playback/PlaybackPlayer";
-import webAudioTouchUnlock from "web-audio-touch-unlock";
 import {withTimesync} from "../../lib/useTimesync";
 import VideoWithConnection from "../../components/media/VideoWithConnection";
 import {SERVER_PORT, SERVER_URL} from "../../env";
-
-fixAudioContextAPI();
-
-const adapter = dynamic(() => import('webrtc-adapter/dist/adapter_core5'), {
-    ssr: false
-});
+import {fixWebRTC} from "../../lib/fixWebRTC";
+import {
+    AudioContext,
+    IAudioContext,
+    IGainNode,
+    IMediaStreamAudioDestinationNode,
+    IMediaStreamTrackAudioSourceNode
+} from "standardized-audio-context";
 
 const configuration: RTCConfiguration = {
     iceServers: [
@@ -62,7 +61,7 @@ const configuration: RTCConfiguration = {
 export interface Connection {
     connection: RTCPeerConnection,
     remoteStream: MediaStream,
-    gainNode: GainNode,
+    gainNode: IGainNode<IAudioContext>,
     established: boolean,
     remoteId: string
 }
@@ -71,8 +70,8 @@ interface State {
     socket?: SocketIOClient.Socket
     remoteConnections: Connection[],
     localStream?: MediaStream,
-    audioContext?: AudioContext,
-    target?: MediaStreamAudioDestinationNode,
+    audioContext?: IAudioContext,
+    target?: IMediaStreamAudioDestinationNode<IAudioContext>,
     debug: boolean
 }
 
@@ -143,10 +142,9 @@ class Join extends React.Component<{
     }
 
     componentDidMount(): void {
-        adapter;
-        // @ts-ignore
-        const audioContext: AudioContext = new (window.AudioContext || window.webkitAudioContext)();
-        webAudioTouchUnlock(audioContext)
+        fixWebRTC();
+        const audioContext: IAudioContext = new AudioContext();
+        /*webAudioTouchUnlock(audioContext)
             .then((unlocked: boolean) => {
                 if (unlocked) {
                     // AudioContext was unlocked from an explicit user action, sound should start playing now
@@ -155,7 +153,7 @@ class Join extends React.Component<{
                 }
             }, (reason: any) => {
                 console.error(reason);
-            });
+            });*/
         this.setState({
             audioContext: audioContext,
             target: audioContext.createMediaStreamDestination()
@@ -247,7 +245,7 @@ class Join extends React.Component<{
 
             // Add remote audio tracks to gain controller
             if (connection.remoteStream.getAudioTracks().length > 0) {
-                const audioNode: MediaStreamTrackAudioSourceNode = this.state.audioContext.createMediaStreamSource(connection.remoteStream); //.createMediaStreamTrackSource(audioTrack);
+                const audioNode: IMediaStreamTrackAudioSourceNode<IAudioContext> = this.state.audioContext.createMediaStreamSource(connection.remoteStream); //.createMediaStreamTrackSource(audioTrack);
                 audioNode.connect(connection.gainNode);
             }
 

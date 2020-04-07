@@ -79,12 +79,12 @@ export default (props: {
             )}
 
             <Button disabled={!formik.isValid} type="submit">
-                Anmelden
+                Login
             </Button>
             {props.backLink && (
                 <Link href={props.backLink}>
                     <Button kind={KIND.secondary}>
-                        Zurück
+                        Back
                     </Button>
                 </Link>
             )}

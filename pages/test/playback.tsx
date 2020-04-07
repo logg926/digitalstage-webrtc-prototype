@@ -1,7 +1,6 @@
 import PlaybackController, {PlaybackFile} from "../../components/media/playback/PlaybackController";
 import React, {useCallback, useEffect, useState} from "react";
 import FileUploader from "../../components/media/playback/FileUploader";
-import {fixAudioContextAPI} from "../../lib/useClick/AudioContextMokeyPatch";
 import {Input} from "baseui/input";
 import {Button} from "baseui/button";
 import {styled} from "baseui";
@@ -9,11 +8,10 @@ import firebase from "firebase/app";
 import "firebase/storage";
 import "firebase/firestore";
 import initFirebase from "../../lib/initFirebase";
-import webAudioTouchUnlock from "web-audio-touch-unlock";
 import useTimesync from "../../lib/useTimesync";
+import {AudioContext, IAudioContext} from "standardized-audio-context";
 
 initFirebase();
-fixAudioContextAPI();
 
 const Row = styled('div', {
     display: 'flex',
@@ -30,8 +28,8 @@ export default () => {
 
     useEffect(() => {
         // @ts-ignore
-        const audioContext: AudioContext = new (window.AudioContext || window.webkitAudioContext)();
-        webAudioTouchUnlock(audioContext)
+        const audioContext: IAudioContext = new AudioContext();
+        /*webAudioTouchUnlock(audioContext)
             .then((unlocked: boolean) => {
                 if (unlocked) {
                     // AudioContext was unlocked from an explicit user action, sound should start playing now
@@ -40,7 +38,7 @@ export default () => {
                 }
             }, (reason: any) => {
                 console.error(reason);
-            });
+            });*/
         setAudioContext(audioContext);
     }, []);
 

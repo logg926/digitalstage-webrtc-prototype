@@ -2,6 +2,7 @@ import React, {useEffect, useRef} from "react";
 import {styled} from "baseui";
 import {Slider} from "baseui/slider";
 import {Connection} from "../../pages/test/join";
+import {IAudioContext, IGainNode} from "standardized-audio-context";
 
 const Wrapper = styled("div", {
     position: 'relative',
@@ -27,7 +28,7 @@ export default (props: {
     connection?: Connection;
     debug?: boolean;
     stream: MediaStream,
-    gainNode?: GainNode,
+    gainNode?: IGainNode<IAudioContext>,
     muted?: boolean,
     className?: string,
     id: string
