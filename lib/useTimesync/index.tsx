@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from "react";
 import * as timesync from 'timesync';
+import {SERVER_PORT, SERVER_URL} from "../../env";
 
-const server: string = process.env.SERVER_URL + ':' + process.env.SERVER_PORT + '/timesync';
+const server: string = SERVER_URL + ':' + SERVER_PORT + '/timesync';
 
 const useTimesync = () => {
     const [offset, setOffset] = useState<number | undefined>();

@@ -28,18 +28,33 @@ export default class MyApp extends App<Props, States> {
                 }}>
                     <BaseProvider theme={this.state.darkMode ? DarkTheme : LightTheme}>
                         <style jsx global>{`
-                    @import url('https://fonts.googleapis.com/css?family=Open+Sans|Sen&display=swap');
-                    html {
-                        margin: 0;
-                        padding: 0;
+                    :root {
+                        --font-sans: -apple-system,BlinkMacSystemFont,"Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue",sans-serif;
+                        --font-mono: Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace;
+                        --header-height: 64px;
                     }
                     body {
                         margin: 0;
                         padding: 0;
-                        font-family: 'Open Sans', sans-serif;
+                        font-family: var(--font-sans);
                     }
                     h1, h2, h3, h4, h5 {
-                        font-family: 'Sen', sans-serif;
+                        font-family: var(--font-sans);
+                    }
+                    h1 {
+                        font-size: 3rem;
+                        letter-spacing: -.066875rem;
+                        font-weight: 700;
+                    }
+                    h2 {
+                        font-size: 2.25rem;
+                        letter-spacing: -.049375rem;
+                        font-weight: 600;
+                    }
+                    h3 {
+                        font-size: 1.5rem;
+                        letter-spacing: -.029375rem;
+                        font-weight: 600;
                     }
                     a, a:hover {
                         color: rgb(242,157,82);

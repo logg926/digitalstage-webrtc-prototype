@@ -2,7 +2,7 @@ import PlaybackController, {PlaybackFile} from "./PlaybackController";
 import React, {useEffect, useState} from "react";
 import firebase from "firebase/app";
 import "firebase/firestore";
-import initFirebase from "../../lib/initFirebase";
+import initFirebase from "../../../lib/initFirebase";
 
 initFirebase();
 

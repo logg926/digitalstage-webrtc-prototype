@@ -1,15 +1,16 @@
 import React from "react";
 import {Button} from "baseui/button";
 import socketIOClient from "socket.io-client";
-import Video from "../components/Video";
+import Video from "../components/media/Video";
 import {styled} from "baseui";
 import {withDarkMode} from "../lib/useDarkModeSwitch";
 import {fixAudioContextAPI} from "../lib/useClick/AudioContextMokeyPatch";
 import dynamic from "next/dynamic";
-import PlaybackPlayer from "../components/playback/PlaybackPlayer";
+import PlaybackPlayer from "../components/media/playback/PlaybackPlayer";
 import webAudioTouchUnlock from "web-audio-touch-unlock";
 import {withTimesync} from "../lib/useTimesync";
-import VideoWithConnection from "../components/VideoWithConnection";
+import VideoWithConnection from "../components/media/VideoWithConnection";
+import {SERVER_PORT, SERVER_URL} from "../env";
 
 fixAudioContextAPI();
 
@@ -304,7 +305,7 @@ class Test extends React.Component<{
     join = () => {
         if (!this.state.socket) {
             this.props.setDarkMode(true);
-            const socket = socketIOClient(process.env.SERVER_URL + ':' + process.env.SERVER_PORT);
+            const socket = socketIOClient(SERVER_URL + ':' + SERVER_PORT);
             socket.on('remove-user', (remoteId: string) => {
                 console.log("remove-user: " + remoteId);
                 this.setState(prevState => ({

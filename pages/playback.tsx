@@ -1,6 +1,6 @@
-import PlaybackController, {PlaybackFile} from "../components/playback/PlaybackController";
+import PlaybackController, {PlaybackFile} from "../components/media/playback/PlaybackController";
 import React, {useCallback, useEffect, useState} from "react";
-import FileUploader from "../components/playback/FileUploader";
+import FileUploader from "../components/media/playback/FileUploader";
 import {fixAudioContextAPI} from "../lib/useClick/AudioContextMokeyPatch";
 import {Input} from "baseui/input";
 import {Button} from "baseui/button";

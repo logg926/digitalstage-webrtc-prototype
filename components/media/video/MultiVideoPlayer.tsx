@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from "react";
 import {styled} from "baseui";
 import {Slider} from "baseui/slider";
-import {Connection} from "../pages/test";
+import {Connection} from "../../../pages/test";
 
 const Wrapper = styled("div", {
     position: 'relative',

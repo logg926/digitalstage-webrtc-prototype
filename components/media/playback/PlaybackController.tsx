@@ -2,8 +2,8 @@ import React, {useEffect, useState} from "react";
 import {OptionsT, Select, Value} from "baseui/select";
 import {Button} from "baseui/button";
 import {styled} from "baseui";
-import usePlayback from "../../lib/usePlayback";
-import {useDarkModeSwitch} from "../../lib/useDarkModeSwitch";
+import usePlayback from "../../../lib/usePlayback";
+import {useDarkModeSwitch} from "../../../lib/useDarkModeSwitch";
 import {Checkbox, LABEL_PLACEMENT} from "baseui/checkbox";
 
 const options: OptionsT = [

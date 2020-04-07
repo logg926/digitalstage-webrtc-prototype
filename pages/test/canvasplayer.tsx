@@ -1,7 +1,7 @@
-import CanvasPlayer from "../../components/video/CanvasPlayer";
+import CanvasPlayer from "../../components/media/video/CanvasPlayer";
 import React, {useCallback, useEffect, useState} from "react";
 import {Button} from "baseui/button";
-import AudioMixer from "../../components/audio/AudioMixer";
+import AudioMixer from "../../components/media/audio/AudioMixer";
 
 export default () => {
     const [localStream, setLocalStream] = useState<MediaStream>();
