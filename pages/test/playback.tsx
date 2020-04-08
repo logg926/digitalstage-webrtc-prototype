@@ -10,6 +10,7 @@ import "firebase/firestore";
 import initFirebase from "../../lib/initFirebase";
 import useTimesync from "../../lib/useTimesync";
 import {AudioContext, IAudioContext} from "standardized-audio-context";
+import webAudioTouchUnlock from "../../lib/webAudioTouchUnlock";
 
 initFirebase();
 
@@ -27,9 +28,8 @@ export default () => {
     const {offset} = useTimesync();
 
     useEffect(() => {
-        // @ts-ignore
         const audioContext: IAudioContext = new AudioContext();
-        /*webAudioTouchUnlock(audioContext)
+        webAudioTouchUnlock(audioContext)
             .then((unlocked: boolean) => {
                 if (unlocked) {
                     // AudioContext was unlocked from an explicit user action, sound should start playing now
@@ -38,7 +38,7 @@ export default () => {
                 }
             }, (reason: any) => {
                 console.error(reason);
-            });*/
+            });
         setAudioContext(audioContext);
     }, []);
 

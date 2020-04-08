@@ -21,7 +21,7 @@ const OverlayText = styled("div", {
     background: 'rgba(255, 255, 255, 0.4)',
     top: 0,
     left: 0,
-    zIndex: 10
+    zIndex: 100
 });
 
 export default (props: {
@@ -41,8 +41,6 @@ export default (props: {
     useEffect(() => {
         if (props.stream) {
             videoRef.current.srcObject = props.stream;
-            console.log("Have new tracks:");
-            console.log(props.stream.getTracks());
         }
         return () => {
             videoRef.current.srcObject = null;
@@ -53,7 +51,7 @@ export default (props: {
         if (props.connection) {
             if (props.debug)
                 setInterval(() => {
-                    if (props.connection && props.connection.connection)
+                    if (props.connection && props.connection.established && props.connection.connection)
                         props.connection.connection.getStats().then(
                             (rtcStatsReport: RTCStatsReport) => {
                                 rtcStatsReport.forEach((rtcStats: any) => {

@@ -5,6 +5,7 @@ import AudioMixer from "../../components/media/audio/AudioMixer";
 import { AudioContext } from 'standardized-audio-context';
 import {IAudioContext} from "standardized-audio-context/build/es2019/interfaces";
 import {fixWebRTC} from "../../lib/fixWebRTC";
+import webAudioTouchUnlock from "../../lib/webAudioTouchUnlock";
 
 
 export default () => {
@@ -21,8 +22,6 @@ export default () => {
                 setLocalStream(stream);
             });
         const audioContext: IAudioContext = new AudioContext();
-        // @ts-ignore
-        /*const audioContext: AudioContext = new (window.AudioContext || window.webkitAudioContext)();
         webAudioTouchUnlock(audioContext)
             .then((unlocked: boolean) => {
                 if (unlocked) {
@@ -32,7 +31,7 @@ export default () => {
                 }
             }, (reason: any) => {
                 console.error(reason);
-            });*/
+            });
         setAudioContext(audioContext);
     }, []);
 

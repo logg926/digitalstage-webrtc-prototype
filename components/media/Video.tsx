@@ -28,8 +28,6 @@ export default (props: {
     useEffect(() => {
         if (props.stream) {
             videoRef.current.srcObject = props.stream;
-            console.log("Have new tracks:");
-            console.log(props.stream.getTracks());
         }
         return () => {
             videoRef.current.srcObject = null;

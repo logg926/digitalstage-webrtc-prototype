@@ -1,5 +1,6 @@
 import {useCallback, useEffect, useState} from "react";
 import {IAudioBufferSourceNode, IAudioContext, AudioContext} from "standardized-audio-context";
+import webAudioTouchUnlock from "../webAudioTouchUnlock";
 
 // Some global settings
 const freq = 600;
@@ -60,7 +61,7 @@ export default (props: {
     const enableClick = () => {
         // @ts-ignore
         const audioCtx: IAudioContext = new AudioContext();
-        /*webAudioTouchUnlock(audioCtx)
+        webAudioTouchUnlock(audioCtx)
             .then((unlocked: boolean) => {
                 if (unlocked) {
                     // AudioContext was unlocked from an explicit user action, sound should start playing now
@@ -69,7 +70,7 @@ export default (props: {
                 }
             }, (reason: any) => {
                 console.error(reason);
-            });*/
+            });
         const source: IAudioBufferSourceNode<IAudioContext> = audioCtx.createBufferSource();
         source.connect(audioCtx.destination);
         source.loop = true;

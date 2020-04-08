@@ -16,6 +16,8 @@ import {
     IMediaStreamAudioDestinationNode,
     IMediaStreamTrackAudioSourceNode
 } from "standardized-audio-context";
+import SettingsModal, {Settings} from "../../components/SettingsModal";
+import webAudioTouchUnlock from "../../lib/webAudioTouchUnlock";
 
 const configuration: RTCConfiguration = {
     iceServers: [
@@ -72,7 +74,9 @@ interface State {
     localStream?: MediaStream,
     audioContext?: IAudioContext,
     target?: IMediaStreamAudioDestinationNode<IAudioContext>,
-    debug: boolean
+    debug: boolean,
+    settings: Settings,
+    settingsOpen: boolean
 }
 
 const NavBar = styled("div", {
@@ -137,14 +141,19 @@ class Join extends React.Component<{
         super(props);
         this.state = {
             remoteConnections: [],
-            debug: false
+            debug: false,
+            settingsOpen: false,
+            settings: {
+                audio: true,
+                useHighBitrate: false
+            }
         }
     }
 
     componentDidMount(): void {
         fixWebRTC();
         const audioContext: IAudioContext = new AudioContext();
-        /*webAudioTouchUnlock(audioContext)
+        webAudioTouchUnlock(audioContext)
             .then((unlocked: boolean) => {
                 if (unlocked) {
                     // AudioContext was unlocked from an explicit user action, sound should start playing now
@@ -153,7 +162,7 @@ class Join extends React.Component<{
                 }
             }, (reason: any) => {
                 console.error(reason);
-            });*/
+            });
         this.setState({
             audioContext: audioContext,
             target: audioContext.createMediaStreamDestination()
@@ -166,15 +175,19 @@ class Join extends React.Component<{
         this.setState(prevState => ({remoteConnections: [...prevState.remoteConnections, connection]}));
         connection.connection.setRemoteDescription(new RTCSessionDescription(data.offer)).then(
             () => connection.connection.createAnswer().then(
-                (answer: RTCSessionDescriptionInit) => connection.connection.setLocalDescription(new RTCSessionDescription(answer)).then(
-                    () => {
-                        console.log("makeAnswer(" + data.socket + ")");
-                        this.state.socket.emit('make-answer', {
-                            answer: answer,
-                            to: data.socket
-                        })
-                    }
-                )
+                (answer: RTCSessionDescriptionInit) => {
+                    if (this.state.settings.useHighBitrate)
+                        answer.sdp = answer.sdp.replace('useinbandfec=1', 'useinbandfec=1; maxaveragebitrate=510000');
+                    connection.connection.setLocalDescription(new RTCSessionDescription(answer)).then(
+                        () => {
+                            console.log("makeAnswer(" + data.socket + ")");
+                            this.state.socket.emit('make-answer', {
+                                answer: answer,
+                                to: data.socket
+                            })
+                        }
+                    )
+                }
             )
         );
     };
@@ -244,25 +257,13 @@ class Join extends React.Component<{
             tracks.forEach((track) => connection.remoteStream.addTrack(track));
 
             // Add remote audio tracks to gain controller
-            if (connection.remoteStream.getAudioTracks().length > 0) {
-                const audioNode: IMediaStreamTrackAudioSourceNode<IAudioContext> = this.state.audioContext.createMediaStreamSource(connection.remoteStream); //.createMediaStreamTrackSource(audioTrack);
-                audioNode.connect(connection.gainNode);
-            }
-
-            /*
-            if (this.state.audioContext.createMediaStreamTrackSource) {
-                console.log("Non Safari?");
+            if (connection.remoteStream)
                 connection.remoteStream.getAudioTracks().forEach(
                     (audioTrack: MediaStreamTrack) => {
-                        const audioNode: MediaStreamTrackAudioSourceNode = this.state.audioContext.createMediaStreamTrackSource(audioTrack); //.createMediaStreamTrackSource(audioTrack);
+                        const audioNode: IMediaStreamTrackAudioSourceNode<IAudioContext> = this.state.audioContext.createMediaStreamTrackSource(audioTrack); //.createMediaStreamTrackSource(audioTrack);
                         audioNode.connect(connection.gainNode);
                     }
                 );
-            } else {
-                console.log("Using fallback for safari");
-                const audioNode: MediaStreamTrackAudioSourceNode = this.state.audioContext.createMediaStreamSource(connection.remoteStream);
-                audioNode.connect(connection.gainNode);
-            }*/
         };
         return connection;
     };
@@ -280,17 +281,23 @@ class Join extends React.Component<{
         // Create new connection
         this.setState(prevState => ({remoteConnections: [...prevState.remoteConnections, connection]}));
         connection.connection.createOffer().then(
-            (offer: RTCSessionDescriptionInit) => connection.connection.setLocalDescription(new RTCSessionDescription(offer)).then(
-                () => this.state.socket.emit('make-offer', {
-                    offer: offer,
-                    to: remoteId
-                })
-            )
+            (offer: RTCSessionDescriptionInit) => {
+                if (this.state.settings.useHighBitrate)
+                    offer.sdp = offer.sdp.replace('useinbandfec=1', 'useinbandfec=1; maxaveragebitrate=510000');
+                connection.connection.setLocalDescription(new RTCSessionDescription(offer)).then(
+                    () => this.state.socket.emit('make-offer', {
+                        offer: offer,
+                        to: remoteId
+                    })
+                )
+            }
         )
     };
 
     disconnect = () => {
-        this.state.remoteConnections.forEach((rc) => rc.connection.close());
+        this.state.remoteConnections.forEach((rc) => {
+            rc.connection.close()
+        });
         if (this.state.socket)
             this.state.socket.close();
         this.setState({
@@ -330,7 +337,10 @@ class Join extends React.Component<{
     };
 
     activateCamera = (): Promise<boolean> => {
-        return navigator.mediaDevices.getUserMedia({video: true, audio: true})
+        return navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: this.state.settings.audio
+        })
             .then((stream: MediaStream) => {
                 this.setState({
                     localStream: stream
@@ -348,6 +358,15 @@ class Join extends React.Component<{
             );
     };
 
+    joinWithCamera = () => {
+        this.activateCamera().then((value: boolean) => {
+            if (!value) {
+                alert("Using spectator mode")
+            }
+            this.join();
+        });
+    };
+
     render() {
         return (
             <>
@@ -359,16 +378,14 @@ class Join extends React.Component<{
                         </Button>
                     ) : (
                         <Button onClick={() => {
-                            this.activateCamera().then((value: boolean) => {
-                                if (!value) {
-                                    alert("Using spectator mode")
-                                }
-                                this.join();
-                            });
+                            this.joinWithCamera();
                         }}>
                             JOIN
                         </Button>
                     )}
+                    <Button onClick={() => this.setState({settingsOpen: true})}>
+                        SETTINGS
+                    </Button>
                     <Button onClick={() => this.setState(prev => ({debug: !prev.debug}))}>
                         DEBUG
                     </Button>
@@ -386,6 +403,16 @@ class Join extends React.Component<{
                                      muted={true}/>
                     ))}
                 </Wrapper>
+                <SettingsModal
+                    onChange={(settings: Settings) => {
+                        this.setState({settings: settings}, () => {
+                            this.disconnect();
+                            this.joinWithCamera();
+                        })
+                    }}
+                    open={this.state.settingsOpen}
+                    onCloseRequested={() => this.setState({settingsOpen: false})}
+                />
             </>
         )
     }
