@@ -21,7 +21,7 @@ module.exports = {
         production: {
             user: 'node',
             host: 'ocean-node',
-            ref: 'origin/develop',
+            ref: 'origin/master',
             repo: "git@github.com/delude88/digitalstage-webrtc-prototype.git",
             path: '/node/digitalstage-proto',
             'post-deploy': 'cd server && npm install && npm run build && pm2 reload ecosystem.config.js --env production'
