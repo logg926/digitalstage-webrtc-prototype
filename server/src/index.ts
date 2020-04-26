@@ -6,7 +6,7 @@ import * as https from "https";
 import * as fs from "fs";
 import * as timesyncServer from "timesync/server";
 
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3010;
 const index = require("./routes/index");
 
 const app = express();
@@ -16,9 +16,8 @@ app.use('/timesync', timesyncServer.requestHandler);
 app.options('*', cors());
 
 const server = https.createServer({
-    key: fs.readFileSync('/etc/letsencrypt/live/v22019048220387295.hotsrv.de/privkey.pem'),
-    cert: fs.readFileSync('/etc/letsencrypt/live/v22019048220387295.hotsrv.de/cert.pem'),
-    ca: fs.readFileSync('/etc/letsencrypt/live/v22019048220387295.hotsrv.de/chain.pem'),
+    key: fs.readFileSync("/etc/letsencrypt/live/www.thepanicure.de/privkey.pem"),
+    cert: fs.readFileSync("/etc/letsencrypt/live/www.thepanicure.de/fullchain.pem"),
     requestCert: false,
     rejectUnauthorized: false
 }, app);

@@ -193,6 +193,7 @@ class Join extends React.Component<{
     };
 
     handleAnswerMade = (data) => {
+        console.log('answer-made');
         const remoteConnection: Connection | undefined = this.state.remoteConnections.find((rc: Connection) => rc.remoteId === data.socket);
         if (remoteConnection) {
             remoteConnection.connection.setRemoteDescription(new RTCSessionDescription(data.answer)).then(() => {
@@ -202,6 +203,7 @@ class Join extends React.Component<{
     };
 
     handleCandidateSent = async (data) => {
+        console.log('candidate-sent');
         const remoteConnection: Connection | undefined = this.state.remoteConnections.find((rc: Connection) => rc.remoteId === data.socket);
         if (remoteConnection) {
             await remoteConnection.connection.addIceCandidate(data.candidate);
@@ -217,6 +219,7 @@ class Join extends React.Component<{
             gainNode: this.state.audioContext.createGain(),
             remoteId: remoteId
         };
+        /*
         connection.gainNode.connect(this.state.audioContext.destination);
         if (this.state.localStream) {
             this.state.localStream.getTracks().forEach(
@@ -233,7 +236,7 @@ class Join extends React.Component<{
                     console.log("Adding playback track");
                     connection.connection.addTrack(track, this.state.target.stream)
                 }
-            );
+            );*/
         connection.connection.onicecandidateerror = (error) => {
             console.log('failed to add ICE Candidate');
             console.log(error.errorText);
@@ -243,9 +246,9 @@ class Join extends React.Component<{
         };
         connection.connection.onicecandidate = (ev: RTCPeerConnectionIceEvent) => {
             console.log("ICE connected");
-            if (ev.candidate && ev.candidate.candidate.length > 0)
+            if (ev.candidate && ev.candidate.candidate.length > 0) {
                 this.sendCandidate(remoteId, ev.candidate);
-            else {
+            } else {
                 console.log("Finished");
                 connection.established = true;
                 this.setState(this.state);
@@ -269,6 +272,7 @@ class Join extends React.Component<{
     };
 
     sendCandidate = (remoteId: string, candidate: RTCIceCandidate) => {
+        console.log('sent-candidate');
         this.state.socket.emit('send-candidate', {
             candidate: candidate,
             to: remoteId
