@@ -1,7 +1,7 @@
 module.exports = {
     apps: [{
-        name: "digitalstage-server-proto",
-        script: "dist/main.js",
+        name: "sdp-server",
+        script: "dist/index.js",
 
         // Options reference: https://pm2.keymetrics.io/docs/usage/application-declaration/
         args: 'one two',
@@ -22,7 +22,7 @@ module.exports = {
             user: 'node',
             host: 'ocean-node',
             ref: 'origin/master',
-            repo: "git@github.com/delude88/digitalstage-webrtc-prototype.git",
+            repo: "https://github.com/delude88/digitalstage-webrtc-prototype.git",
             path: '/node/digitalstage-proto',
             'post-deploy': 'cd server && npm install && npm run build && pm2 reload ecosystem.config.js --env production'
         }
